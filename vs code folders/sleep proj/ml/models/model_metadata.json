@@ -1,0 +1,45 @@
+{
+  "selected_model": "SVM",
+  "labels": [
+    "Average",
+    "Good",
+    "Poor"
+  ],
+  "feature_columns": [
+    "sleep_duration",
+    "bedtime_minutes",
+    "wake_time_minutes",
+    "caffeine",
+    "exercise_duration",
+    "screen_time",
+    "stress_level",
+    "mood",
+    "interruptions"
+  ],
+  "comparison_results": {
+    "Logistic Regression": {
+      "accuracy": 0.69,
+      "precision": 0.6481,
+      "recall": 0.69,
+      "f1": 0.668
+    },
+    "Decision Tree": {
+      "accuracy": 0.71,
+      "precision": 0.6924,
+      "recall": 0.71,
+      "f1": 0.7001
+    },
+    "Random Forest": {
+      "accuracy": 0.75,
+      "precision": 0.7257,
+      "recall": 0.75,
+      "f1": 0.7262
+    },
+    "SVM": {
+      "accuracy": 0.76,
+      "precision": 0.71,
+      "recall": 0.76,
+      "f1": 0.7339
+    }
+  }
+}

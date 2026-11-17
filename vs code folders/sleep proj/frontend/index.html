@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sleep Quality Predictor - A smart ML-powered tool to analyze and improve your sleep quality with personalized wellness suggestions.">
+    <title>Sleep Quality Predictor</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+    <!-- ── Loading Overlay ── -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Analyzing your sleep patterns<span class="loading-dots"></span></div>
+    </div>
+
+    <!-- ── Toast Container ── -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ── Main App ── -->
+    <div class="app-container">
+
+        <!-- ── Header ── -->
+        <header class="app-header">
+            <div class="brand-lockup">
+                <span class="logo-icon" aria-hidden="true">&#127769;</span>
+                <div>
+                    <h1>Sleep Quality<br><em>Predictor</em></h1>
+                    <p class="subtitle">A small check-in for a better night.</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- ── Input Form ── -->
+        <section class="form-section" aria-label="Sleep Data Input Form">
+            <div class="glass-card">
+                <div class="section-title">
+                    <span class="icon" aria-hidden="true">&#128203;</span>
+                    <div>
+                        <span>How was your day?</span>
+                        <small class="section-helper">There are no perfect answers, just helpful ones.</small>
+                    </div>
+                </div>
+
+                <form id="sleep-form" novalidate>
+                    <div class="form-grid">
+
+                        <!-- Sleep Duration -->
+                        <div class="form-group">
+                            <label for="sleep-duration">
+                                <span class="label-icon">&#128564;</span> Sleep Duration
+                            </label>
+                            <div class="input-suffix">
+                                <input type="number" id="sleep-duration" class="form-input"
+                                       placeholder="e.g. 7.5" min="0.5" max="24" step="0.1" required>
+                                <span class="suffix-text">hours</span>
+                            </div>
+                            <span class="error-message" id="error-sleep-duration">Please enter a valid sleep duration (0.5-24 hours).</span>
+                        </div>
+
+                        <!-- Bedtime -->
+                        <div class="form-group">
+                            <label for="bedtime">
+                                <span class="label-icon">&#127769;</span> Bedtime
+                            </label>
+                            <input type="time" id="bedtime" class="form-input" value="23:00" required>
+                            <span class="error-message" id="error-bedtime">Please select a valid bedtime.</span>
+                        </div>
+
+                        <!-- Wake-up Time -->
+                        <div class="form-group">
+                            <label for="wake-time">
+                                <span class="label-icon">&#9728;&#65039;</span> Wake-up Time
+                            </label>
+                            <input type="time" id="wake-time" class="form-input" value="06:30" required>
+                            <span class="error-message" id="error-wake-time">Please select a valid wake-up time.</span>
+                        </div>
+
+                        <!-- Caffeine Intake -->
+                        <div class="form-group">
+                            <label for="caffeine">
+                                <span class="label-icon">&#9749;</span> Caffeine Intake
+                            </label>
+                            <select id="caffeine" class="form-select" required>
+                                <option value="">Select level...</option>
+                                <option value="None">None</option>
+                                <option value="Low">Low</option>
+                                <option value="Moderate" selected>Moderate</option>
+                                <option value="High">High</option>
+                            </select>
+                            <span class="error-message" id="error-caffeine">Please select a caffeine intake level.</span>
+                        </div>
+
+                        <!-- Exercise Duration -->
+                        <div class="form-group">
+                            <label for="exercise">
+                                <span class="label-icon">&#127939;</span> Exercise Duration
+                            </label>
+                            <div class="input-suffix">
+                                <input type="number" id="exercise" class="form-input"
+                                       placeholder="e.g. 30" min="0" max="300" step="1" required>
+                                <span class="suffix-text">minutes</span>
+                            </div>
+                            <span class="error-message" id="error-exercise">Please enter a valid exercise duration (0-300 min).</span>
+                        </div>
+
+                        <!-- Screen Time -->
+                        <div class="form-group">
+                            <label for="screen-time">
+                                <span class="label-icon">&#128241;</span> Screen Time Before Bed
+                            </label>
+                            <div class="input-suffix">
+                                <input type="number" id="screen-time" class="form-input"
+                                       placeholder="e.g. 60" min="0" max="600" step="1" required>
+                                <span class="suffix-text">minutes</span>
+                            </div>
+                            <span class="error-message" id="error-screen-time">Please enter a valid screen time (0-600 min).</span>
+                        </div>
+
+                        <!-- Stress Level -->
+                        <div class="form-group full-width">
+                            <label for="stress">
+                                <span class="label-icon">&#129504;</span> Stress Level
+                            </label>
+                            <div class="slider-container">
+                                <input type="range" id="stress" class="slider-track"
+                                       min="0" max="10" step="1" value="5">
+                                <div class="slider-value" id="stress-display">5/10</div>
+                            </div>
+                        </div>
+
+                        <!-- Mood Before Sleep -->
+                        <div class="form-group">
+                            <label for="mood">
+                                <span class="label-icon">&#128522;</span> Mood Before Sleep
+                            </label>
+                            <select id="mood" class="form-select" required>
+                                <option value="">Select mood...</option>
+                                <option value="Happy">Happy</option>
+                                <option value="Neutral" selected>Neutral</option>
+                                <option value="Sad">Sad</option>
+                                <option value="Anxious">Anxious</option>
+                            </select>
+                            <span class="error-message" id="error-mood">Please select your mood before sleep.</span>
+                        </div>
+
+                        <!-- Sleep Interruptions -->
+                        <div class="form-group">
+                            <label>
+                                <span class="label-icon">&#128276;</span> Sleep Interruptions
+                            </label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="interruptions" value="Yes">
+                                    <span class="radio-dot"></span>
+                                    <span class="radio-label">Yes</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="interruptions" value="No" checked>
+                                    <span class="radio-dot"></span>
+                                    <span class="radio-label">No</span>
+                                </label>
+                            </div>
+                            <span class="error-message" id="error-interruptions">Please select yes or no.</span>
+                        </div>
+
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary" id="btn-predict">
+                            &#10024; See My Sleep Results
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="btn-reset">
+                            &#128260; Reset
+                        </button>
+                        <button type="button" class="btn btn-outline" id="btn-history">
+                            &#128202; Past Predictions
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ── Result Card ── -->
+        <section class="result-section" id="result-section" aria-label="Prediction Result">
+            <div class="glass-card result-card" id="result-card">
+                <span class="result-emoji" id="result-emoji"></span>
+                <div class="result-label" id="result-label"></div>
+                <p class="result-description" id="result-description"></p>
+                <p class="result-confidence" id="result-confidence"></p>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" id="confidence-fill"></div>
+                </div>
+
+                <div class="tips-section">
+                    <h3>&#128161; Personalized Suggestions</h3>
+                    <div id="tips-list"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── History Section ── -->
+        <section class="history-section" id="history-section" aria-label="Prediction History">
+            <div class="glass-card">
+                <div class="history-header">
+                    <div class="section-title" style="margin-bottom:0;">
+                        <span class="icon" aria-hidden="true">&#128202;</span>
+                        <span>Prediction History</span>
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="btn-clear-history" style="padding:8px 16px; font-size:0.85rem;">
+                        &#128465; Clear History
+                    </button>
+                </div>
+
+                <div class="history-table-container" id="history-table-container"></div>
+
+                <!-- Charts -->
+                <div class="charts-grid" id="charts-grid" style="display:none;">
+                    <div class="chart-card">
+                        <h4>&#128564; Sleep Duration Trend</h4>
+                        <canvas id="chart-sleep"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h4>&#129504; Stress Level Trend</h4>
+                        <canvas id="chart-stress"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h4>&#128241; Screen Time Trend</h4>
+                        <canvas id="chart-screen"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h4>&#127775; Sleep Quality Trend</h4>
+                        <canvas id="chart-quality"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Footer ── -->
+        <footer class="app-footer">
+            <p><strong>Disclaimer:</strong> This tool is for general wellness and educational purposes only. It does not provide medical advice, diagnosis, or treatment. Always consult a healthcare professional for sleep-related concerns.</p>
+            <p style="margin-top:8px; opacity:0.5;">Sleep Quality Predictor &mdash; Built with ML & Care</p>
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
